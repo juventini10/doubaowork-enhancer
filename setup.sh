@@ -68,7 +68,7 @@ done
 if [ "$FP_SK" -ge 8 ]; then echo -e "${GREEN}  [OK] 记忆Skill: $FP_SK/9${NC}"
 else echo -e "${RED}  [缺] 记忆Skill仅 $FP_SK/9${NC}"; FP_FAIL=$((FP_FAIL+1)); fi
 if [ "$FP_FAIL" -gt 0 ]; then
-  echo -e "${RED}[X] $MC_SRC 存在但不是完整布洛陀($FP_FAIL项指纹缺失)${NC}"; exit 1
+  echo -e "${RED}[X] $MC_SRC 存在但不是完整布洛陀(${FP_FAIL}项指纹缺失)${NC}"; exit 1
 fi
 echo -e "${GREEN}[OK] 布洛陀指纹验证通过${NC}"
 
@@ -161,7 +161,7 @@ if [ -f "$AMBER_WHITELIST" ]; then
       ADDED=$((ADDED+1))
     fi
   done < "$PKG_DIR/scripts/amber/amber-whitelist.txt.template"
-  echo -e "${GREEN}[OK] 白名单补充: 新增$ADDED条${NC}"
+  echo -e "${GREEN}[OK] 白名单补充: 新增${ADDED}条${NC}"
 else
   echo -e "${YELLOW}  ⏭️ 跳过(记忆琥珀白名单不存在)${NC}"
 fi
@@ -197,7 +197,7 @@ echo -e "  3. 运行验证脚本确认安装: bash verify.sh"
 echo ""
 
 if [ "$VERIFY_FAIL" -gt 0 ]; then
-  echo -e "${YELLOW}⚠️  有$VERIFY_FAIL项验证失败,请检查上方日志${NC}"
+  echo -e "${YELLOW}⚠️  有${VERIFY_FAIL}项验证失败,请检查上方日志${NC}"
   exit 1
 fi
 exit 0

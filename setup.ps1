@@ -87,7 +87,7 @@ $FP_SK = 0
 foreach ($s in $FP_SKILLS) { if (Test-Path (Join-Path $MC "技能配置\$s\SKILL.md")) { $FP_SK++ } }
 if ($FP_SK -ge 8) { Write-Ok "记忆Skill: $FP_SK/9" }
 else { Write-Bad "记忆Skill仅 $FP_SK/9"; $FP_FAIL++ }
-if ($FP_FAIL -gt 0) { Write-Bad "不是完整布洛陀($FP_FAIL项指纹缺失)"; exit 1 }
+if ($FP_FAIL -gt 0) { Write-Bad "不是完整布洛陀(${FP_FAIL}项指纹缺失)"; exit 1 }
 Write-Ok "布洛陀指纹验证通过"
 
 # ── [2/8] 检测豆包办公配置 ──
@@ -188,7 +188,7 @@ if (Test-Path $AMBER_WL) {
       $ADDED++
     }
   }
-  Write-Ok "白名单补充: 新增$ADDED条"
+  Write-Ok "白名单补充: 新增${ADDED}条"
 } else {
   Write-Warn "跳过(记忆琥珀白名单不存在)"
 }
@@ -221,7 +221,7 @@ Write-Host "  3. 运行验证脚本确认安装: powershell -ExecutionPolicy Byp
 Write-Host ""
 
 if ($VF -gt 0) {
-  Write-Warn "有$VF项验证失败,请检查上方日志"
+  Write-Warn "有${VF}项验证失败,请检查上方日志"
   exit 1
 }
 exit 0

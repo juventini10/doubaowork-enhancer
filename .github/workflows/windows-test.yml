@@ -6,73 +6,45 @@ on:
   workflow_dispatch:
 
 jobs:
-  windows-setup-verify-rollback:
+  windows-full:
     runs-on: windows-latest
     name: Win真机 · setup+verify+rollback
     steps:
       - uses: actions/checkout@v4
 
-      - name: 模拟布洛陀记忆中心(最小指纹环境)
+      - name: 创建模拟布洛陀环境
         shell: powershell
-        run: |
-          $MC = Join-Path $env:RUNNER_TEMP "buluotuo-mc"
-          $env:MEMORY_CENTER = $MC
-          echo "MEMORY_CENTER=$MC" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-          # 核心层
-          New-Item -ItemType Directory -Path (Join-Path $MC "核心层") -Force | Out-Null
-          Set-Content -Path (Join-Path $MC "核心层\CORE.md") -Value "# CORE`n布洛陀核心层" -Encoding UTF8
-          # 情境层
-          New-Item -ItemType Directory -Path (Join-Path $MC "情境层") -Force | Out-Null
-          Set-Content -Path (Join-Path $MC "情境层\动态状态快照.md") -Value "# 动态状态快照" -Encoding UTF8
-          # 潜意识层
-          New-Item -ItemType Directory -Path (Join-Path $MC "潜意识层") -Force | Out-Null
-          Set-Content -Path (Join-Path $MC "潜意识层\SHADOW.md") -Value "# SHADOW" -Encoding UTF8
-          # 记忆规则(含铁律关键词)
-          New-Item -ItemType Directory -Path (Join-Path $MC "记忆规则") -Force | Out-Null
-          Set-Content -Path (Join-Path $MC "记忆规则\用户基本规则-铁律版.md") -Value "# 铁律`n这是铁律版本" -Encoding UTF8
-          # 记忆琥珀
-          New-Item -ItemType Directory -Path (Join-Path $MC "记忆琥珀\engine") -Force | Out-Null
-          Set-Content -Path (Join-Path $MC "记忆琥珀\engine\amber-whitelist.txt") -Value "# whitelist" -Encoding UTF8
-          # 9个记忆Skill(≥8即通过)
-          $skills = @("awaken-memory-system","clock-loop","daily-buddy","growth-box","meta-aletheia","shall-we-talk","system-logger","triwich","sucair")
-          foreach ($s in $skills) {
-            $dir = Join-Path $MC "技能配置\$s"
-            New-Item -ItemType Directory -Path $dir -Force | Out-Null
-            Set-Content -Path (Join-Path $dir "SKILL.md") -Value "---`nname: $s`n---`n# $s" -Encoding UTF8
-          }
-          Write-Host "模拟布洛陀环境创建完成: $MC"
-          Get-ChildItem $MC -Recurse -Depth 1 | Select-Object FullName
+        run: powershell -ExecutionPolicy Bypass -File .github/scripts/setup-mc-env.ps1
 
-      - name: 模拟豆包办公配置根
+      - name: 创建豆包办公配置根
         shell: powershell
         run: |
           $doubao = Join-Path $env:APPDATA "DoubaoWork\Default\.doubaowork\agent_mode\workspace"
           New-Item -ItemType Directory -Path $doubao -Force | Out-Null
           Write-Host "豆包办公配置根: $doubao"
-          Test-Path $doubao
 
-      - name: 运行 setup.ps1 (安装)
+      - name: 运行 setup.ps1
         shell: powershell
         run: |
-          $env:MEMORY_CENTER = (Join-Path $env:RUNNER_TEMP "buluotuo-mc")
+          $env:MEMORY_CENTER = Join-Path $env:RUNNER_TEMP "buluotuo-mc"
           powershell -ExecutionPolicy Bypass -File setup.ps1
           if ($LASTEXITCODE -ne 0) { throw "setup.ps1 退出码 $LASTEXITCODE" }
 
-      - name: 运行 verify.ps1 (验证)
+      - name: 运行 verify.ps1
         shell: powershell
         run: |
-          $env:MEMORY_CENTER = (Join-Path $env:RUNNER_TEMP "buluotuo-mc")
+          $env:MEMORY_CENTER = Join-Path $env:RUNNER_TEMP "buluotuo-mc"
           powershell -ExecutionPolicy Bypass -File verify.ps1
           if ($LASTEXITCODE -ne 0) { throw "verify.ps1 退出码 $LASTEXITCODE" }
 
-      - name: 运行 rollback.ps1 (回滚·自动确认)
+      - name: 运行 rollback.ps1 (自动确认)
         shell: powershell
         run: |
-          $env:MEMORY_CENTER = (Join-Path $env:RUNNER_TEMP "buluotuo-mc")
+          $env:MEMORY_CENTER = Join-Path $env:RUNNER_TEMP "buluotuo-mc"
           "y" | powershell -ExecutionPolicy Bypass -File rollback.ps1
           if ($LASTEXITCODE -ne 0) { throw "rollback.ps1 退出码 $LASTEXITCODE" }
 
-      - name: 回滚后验证(加强包内容已清除)
+      - name: 验证回滚结果
         shell: powershell
         run: |
           $MC = Join-Path $env:RUNNER_TEMP "buluotuo-mc"
@@ -82,8 +54,8 @@ jobs:
           $scriptsExists = Test-Path $scriptsDir
           Write-Host "五系统文件目录存在: $sysExists (应为False)"
           Write-Host "特有脚本目录存在: $scriptsExists (应为False)"
-          if ($sysExists -or $scriptsExists) { throw "回滚不彻底: sysDir=$sysExists scriptsDir=$scriptsExists" }
-          Write-Host "回滚验证通过: 加强包内容已清除,布洛陀基础安装未受影响"
+          if ($sysExists -or $scriptsExists) { throw "回滚不彻底" }
+          Write-Host "回滚验证通过"
 
   macos-setup-verify:
     runs-on: macos-latest
@@ -91,35 +63,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 模拟布洛陀记忆中心
-        run: |
-          MC="$RUNNER_TEMP/buluotuo-mc"
-          echo "MEMORY_CENTER=$MC" >> $GITHUB_ENV
-          mkdir -p "$MC/核心层" "$MC/情境层" "$MC/潜意识层" "$MC/记忆规则" "$MC/记忆琥珀/engine"
-          echo "# CORE" > "$MC/核心层/CORE.md"
-          echo "# 快照" > "$MC/情境层/动态状态快照.md"
-          echo "# SHADOW" > "$MC/潜意识层/SHADOW.md"
-          printf "# 铁律\n铁律版本\n" > "$MC/记忆规则/用户基本规则-铁律版.md"
-          echo "# whitelist" > "$MC/记忆琥珀/engine/amber-whitelist.txt"
-          for s in awaken-memory-system clock-loop daily-buddy growth-box meta-aletheia shall-we-talk system-logger triwich sucair; do
-            mkdir -p "$MC/技能配置/$s"
-            printf -- "---\nname: $s\n---\n# $s\n" > "$MC/技能配置/$s/SKILL.md"
-          done
-          echo "模拟环境完成"
+      - name: 创建模拟布洛陀环境
+        run: bash .github/scripts/setup-mc-env.sh
 
-      - name: 模拟豆包办公配置根
+      - name: 创建豆包办公配置根
         run: |
           DOUBAO="$HOME/Library/Application Support/DoubaoWork/Default/.doubaowork/agent_mode/workspace"
           mkdir -p "$DOUBAO"
           echo "豆包办公配置根: $DOUBAO"
 
-      - name: 运行 setup.sh (安装)
+      - name: 运行 setup.sh
         run: |
           export MEMORY_CENTER="$RUNNER_TEMP/buluotuo-mc"
           bash setup.sh
           if [ $? -ne 0 ]; then echo "setup.sh 失败"; exit 1; fi
 
-      - name: 运行 verify.sh (验证)
+      - name: 运行 verify.sh
         run: |
           export MEMORY_CENTER="$RUNNER_TEMP/buluotuo-mc"
           bash verify.sh
