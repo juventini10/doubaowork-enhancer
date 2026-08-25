@@ -41,6 +41,7 @@ Write-Host "`n[3/5] 五系统文件检测"
 foreach ($f in @("SOUL.md","IDENTITY.md","USER.md","MEMORY.md","customPrompt.md")) {
     Check $f (Test-Path "$SYSTEM_FILES_DIR\$f")
 }
+Check "豆包办公宪法.md" (Test-Path "$MC\核心层\豆包办公宪法.md")
 
 Write-Host "`n[4/5] Skill软链接检测(抽样)"
 foreach ($s in @("system-logger","daily-buddy","awaken-memory-system","growth-box","clock-loop")) {
@@ -48,6 +49,7 @@ foreach ($s in @("system-logger","daily-buddy","awaken-memory-system","growth-bo
     $isLink = ($item -and ($item.LinkType -eq "Junction" -or $item.LinkType -eq "SymbolicLink"))
     Check "$s 软链" $isLink "warn"
 }
+Check "布洛陀-豆包办公规则 Skill" (Test-Path "$USER_SKILLS\布洛陀-豆包办公规则")
 
 Write-Host "`n[5/5] 特有脚本检测"
 Check "巡逻脚本" (Test-Path "$SCRIPTS_DIR\patrol\route_doubaowork_patrol.sh")
@@ -55,6 +57,14 @@ Check "Skill健康守卫" (Test-Path "$SCRIPTS_DIR\guards\doubaowork_skill_healt
 
 Write-Host "`n=== 验证结果 ==="
 Write-Host "通过: $PASS | 失败: $FAIL | 警告: $WARN"
+
+Write-Host "`n=== 手动验证（必做·脚本无法自动检测） ==="
+Write-Host "  本脚本只能验证本地文件，无法验证云端的「工作任务偏好指令」。"
+Write-Host "  请开一个新对话，问AI「你的第一目的是什么」："
+Write-Host "  - 能答出「让这套系统成为自主进化的活系统」→ ✅ 配置成功，跨会话记忆生效"
+Write-Host "  - 答不出来 → ❌ 还没配置工作任务偏好指令，运行 setup.ps1 后按提示粘贴（30秒搞定）"
+Write-Host ""
+
 if ($FAIL -gt 0) { Write-Host "❌ 验证失败，请运行 setup.ps1 重新安装"; exit 1 }
 elseif ($WARN -gt 0) { Write-Host "⚠️ 验证通过(有警告)，警告项为可选增强"; exit 0 }
 else { Write-Host "✅ 全部通过"; exit 0 }

@@ -64,8 +64,8 @@ done
 # [5/6] 脱敏完整性
 echo ""
 echo "[5/6] 脱敏完整性(零绝对路径残留)"
-abs_sh=$(grep -rc '/Users/' "$PKG_DIR" --include="*.sh" --include="*.ps1" --include="*.md" --include="*.template" --exclude="_sync-check.sh" --exclude="desensitize-guard.sh" --exclude="desensitize-guard.ps1" 2>/dev/null | grep -v ':0$' | wc -l)
-abs_win=$(grep -rc 'C:\\\\Users' "$PKG_DIR" --include="*.sh" --include="*.ps1" --include="*.md" --exclude="_sync-check.sh" --exclude="desensitize-guard.sh" --exclude="desensitize-guard.ps1" 2>/dev/null | grep -v ':0$' | wc -l)
+abs_sh=$(grep -rc '/Users/' "$PKG_DIR" --include="*.sh" --include="*.ps1" --include="*.md" --include="*.template" --exclude="_sync-check.sh" --exclude="_sync-check.ps1" --exclude="desensitize-guard.sh" --exclude="desensitize-guard.ps1" 2>/dev/null | grep -v ':0$' | wc -l)
+abs_win=$(grep -rc 'C:\\\\Users' "$PKG_DIR" --include="*.sh" --include="*.ps1" --include="*.md" --exclude="_sync-check.sh" --exclude="_sync-check.ps1" --exclude="desensitize-guard.sh" --exclude="desensitize-guard.ps1" 2>/dev/null | grep -v ':0$' | wc -l)
 check "零/Users/绝对路径" "[ '$abs_sh' -eq 0 ]"
 check "零C:\\Users绝对路径" "[ '$abs_win' -eq 0 ]"
 mc_placeholder=$(grep -rl '§§MC§§' "$PKG_DIR" --include="*.sh" --include="*.ps1" --include="*.template" 2>/dev/null | wc -l)

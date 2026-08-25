@@ -55,12 +55,14 @@ echo "[3/5] 五系统文件检测"
 for f in SOUL.md IDENTITY.md USER.md MEMORY.md customPrompt.md; do
   check "$f" "[ -s '$SYSTEM_FILES_DIR/$f' ]"
 done
+check "豆包办公宪法.md" "[ -s '$MC/核心层/豆包办公宪法.md' ]"
 
 echo ""
 echo "[4/5] Skill软链接检测(抽样)"
 for s in system-logger daily-buddy awaken-memory-system growth-box clock-loop; do
   check "$s 软链" "[ -L '$USER_SKILLS/$s' ]" warn
 done
+check "布洛陀-豆包办公规则 Skill" "[ -d '$USER_SKILLS/布洛陀-豆包办公规则' ]"
 
 echo ""
 echo "[5/5] 特有脚本检测"
@@ -70,6 +72,15 @@ check "Skill健康守卫" "[ -f '$SCRIPTS_DIR/guards/doubaowork_skill_health_gua
 echo ""
 echo "=== 验证结果 ==="
 echo "通过: $PASS | 失败: $FAIL | 警告: $WARN"
+
+echo ""
+echo "=== 手动验证（必做·脚本无法自动检测） ==="
+echo "  本脚本只能验证本地文件，无法验证云端的「工作任务偏好指令」。"
+echo "  请开一个新对话，问AI「你的第一目的是什么」："
+echo "  - 能答出「让这套系统成为自主进化的活系统」→ ✅ 配置成功，跨会话记忆生效"
+echo "  - 答不出来 → ❌ 还没配置工作任务偏好指令，运行 setup.sh 后按提示粘贴（30秒搞定）"
+echo ""
+
 if [ "$FAIL" -gt 0 ]; then
   echo "❌ 验证失败，请运行 setup.sh 重新安装"
   exit 1

@@ -120,6 +120,17 @@ Get-ChildItem (Join-Path $TEMPLATE_DIR "*.md") | ForEach-Object {
 }
 Write-Ok "五系统文件: 新部署$DEPLOYED / 已存在跳过$SKIPPED"
 
+# 部署宪法文件（端专属·核心层）
+$constitutionTmpl = Join-Path $PKG_DIR "templates\核心层\豆包办公宪法.md"
+$constitutionTarget = Join-Path $MC "核心层\豆包办公宪法.md"
+New-Item -ItemType Directory -Path (Join-Path $MC "核心层") -Force | Out-Null
+if (Test-Path $constitutionTarget) {
+    Write-Host "  ⏭️ 跳过(已存在): 核心层\豆包办公宪法.md"
+} else {
+    (Get-Content $constitutionTmpl -Raw -Encoding UTF8) -replace '§§MC§§', $MC | Set-Content $constitutionTarget -Encoding UTF8
+    Write-Ok "部署: 核心层\豆包办公宪法.md"
+}
+
 # ── [4/8] Skill软链接(Junction·增量安全·不覆盖用户实体文件) ──
 Write-Step "[4/8] 建立Skill软链接(记忆中心→豆包办公.user_skills)..."
 $LINKED=0; $KEPT=0; $FAIL=0
@@ -153,6 +164,16 @@ Get-ChildItem (Join-Path $MC "技能配置") -Directory | ForEach-Object {
   }
 }
 Write-Ok "Skill软链: 新建/已存在$LINKED / 保留用户实体$KEPT / 失败$FAIL"
+
+# 部署规则Skill（端专属·T0加载五系统文件）
+$ruleSkillTmpl = Join-Path $PKG_DIR "templates\skills\布洛陀-豆包办公规则"
+$ruleSkillTarget = Join-Path $USER_SKILLS "布洛陀-豆包办公规则"
+if (Test-Path $ruleSkillTarget) {
+    Write-Host "  ⏭️ 跳过(已存在): 布洛陀-豆包办公规则 Skill"
+} else {
+    Copy-Item -Path $ruleSkillTmpl -Destination $ruleSkillTarget -Recurse -Force
+    Write-Ok "部署: 布洛陀-豆包办公规则 Skill"
+}
 
 # ── [5/8] 部署豆包办公端特有脚本 ──
 Write-Step "[5/8] 部署豆包办公端特有脚本..."
@@ -208,18 +229,56 @@ if (Test-Path (Join-Path $SCRIPTS_DIR "patrol\route_doubaowork_patrol.sh")) { $V
 else { Write-Bad "巡逻脚本缺失"; $VF++ }
 Write-Ok "自验证: 通过$VP / 失败$VF"
 
-# ── [8/8] 完成报告 ──
+# ── [8/8] 完成报告 + 自动复制剪贴板 ──
 Write-Host ""
 Write-Step "=== 豆包办公加强包 接入完成 ==="
 Write-Ok "五系统文件: $SYSTEM_FILES_DIR\"
 Write-Ok "Skill软链: $USER_SKILLS\"
 Write-Ok "特有脚本: $SCRIPTS_DIR\"
-Write-Warn "下一步:"
-Write-Host "  1. 新会话启动时,AI会主动Read五系统文件(SOUL/IDENTITY/USER/MEMORY/customPrompt)"
-Write-Host "  2. 如需定时巡逻,在豆包办公中创建cronjob挂载巡逻脚本"
-Write-Host "  3. 运行验证脚本确认安装: powershell -ExecutionPolicy Bypass -File verify.ps1"
-Write-Host "  4. ⚠️ 关键: 将 $SYSTEM_FILES_DIR\customPrompt.md「三、执行准则」段全文复制到 豆包办公→设置→自定义指令"
-Write-Host "     (核心铁律靠平台自动注入🔴,不设置则五系统文件不会自动加载)"
+
+# 自动复制自定义指令到剪贴板
+$copyFile = Join-Path $PSScriptRoot "custom-prompt-to-copy.md"
+$clipboardCopied = $false
+if (Test-Path $copyFile) {
+    try {
+        $content = Get-Content $copyFile -Raw -Encoding UTF8
+        $pattern = '(?s)^```\r?\n(.*?)\r?\n```'
+        $match = [regex]::Match($content, $pattern)
+        if ($match.Success) {
+            $match.Groups[1].Value | Set-Clipboard
+            Write-Ok "自定义指令已自动复制到剪贴板"
+            $clipboardCopied = $true
+        }
+    } catch {
+        Write-Warn "未能自动复制到剪贴板，请手动复制: $copyFile"
+    }
+} else {
+    Write-Warn "未找到 custom-prompt-to-copy.md，请手动复制自定义指令"
+}
+
+# 自动打开豆包办公
+try { Start-Process "doubaowork:" -ErrorAction Stop } catch {}
+
+Write-Host ""
+Write-Warn "还差最后一步（30秒搞定）:"
+Write-Host "  豆包办公跟其他AI工具不一样，它的偏好设置存在云端，脚本没法自动写进去，需要你手动粘贴一次。"
+Write-Host "  粘贴之后，每次开新对话AI都会自动记住你是谁、你要什么，换个新对话也不会忘。"
+Write-Host "  不粘贴的话，五系统文件虽然装好了，但AI不会主动去读，等于白装。"
+Write-Host ""
+if ($clipboardCopied) {
+    Write-Host "  1. 豆包办公 → 左下角头像 → 设置 → 工作任务偏好指令"
+    Write-Host "  2. 粘贴（Ctrl+V）→ 点保存"
+    Write-Host "  3. 开个新对话，问AI「你的第一目的是什么」，能答出「让这套系统成为自主进化的活系统」就成功了"
+} else {
+    Write-Host "  1. 打开 $copyFile，复制代码块里的全部内容"
+    Write-Host "  2. 豆包办公 → 左下角头像 → 设置 → 工作任务偏好指令"
+    Write-Host "  3. 粘贴（Ctrl+V）→ 点保存"
+    Write-Host "  4. 开个新对话，问AI「你的第一目的是什么」，能答出「让这套系统成为自主进化的活系统」就成功了"
+}
+Write-Host ""
+Write-Step "其他操作:"
+Write-Host "  - 运行验证脚本确认安装: powershell -ExecutionPolicy Bypass -File verify.ps1"
+Write-Host "  - 如需定时巡逻，在豆包办公中创建cronjob挂载巡逻脚本"
 Write-Host ""
 
 if ($VF -gt 0) {

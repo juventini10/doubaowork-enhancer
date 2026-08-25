@@ -60,6 +60,8 @@ else
   echo -e "${YELLOW}  [⚠] 记忆琥珀: 未检测到完整安装,本加强包将跳过白名单补充${NC}"
 fi
 # Skill检测(≥8即通过)
+# ⚠️ Skill列表同步原则：此数组必须与布洛陀-安装包 references/skills/ 目录保持一致
+# 布洛陀-安装包新增/删除Skill时，本数组须同步更新。禁止自行增删与主包不一致的Skill。
 FP_SKILLS=(awaken-memory-system clock-loop daily-buddy growth-box meta-aletheia shall-we-talk system-logger triwich sucair)
 FP_SK=0
 for s in "${FP_SKILLS[@]}"; do
@@ -101,6 +103,17 @@ for tmpl in "$TEMPLATE_DIR"/*.md; do
 done
 echo -e "${GREEN}[OK] 五系统文件: 新部署$DEPLOYED / 已存在跳过$SKIPPED${NC}"
 
+# 部署宪法文件（端专属·核心层）
+CONSTITUTION_TMPL="$PKG_DIR/templates/核心层/豆包办公宪法.md"
+CONSTITUTION_TARGET="$MC_SRC/核心层/豆包办公宪法.md"
+mkdir -p "$MC_SRC/核心层"
+if [ -f "$CONSTITUTION_TARGET" ]; then
+  echo -e "  ⏭️ 跳过(已存在): 核心层/豆包办公宪法.md"
+else
+  sed "s|§§MC§§|$MC_SRC|g" "$CONSTITUTION_TMPL" > "$CONSTITUTION_TARGET"
+  echo -e "  ✅ 部署: 核心层/豆包办公宪法.md"
+fi
+
 # ── [4/8] Skill软链接 ──
 echo -e "${YELLOW}[4/8] 建立Skill软链接(记忆中心→豆包办公.user_skills)...${NC}"
 LINKED=0; LINK_FAIL=0
@@ -127,6 +140,16 @@ for skill_dir in "$MC_SRC/技能配置/"*/; do
   fi
 done
 echo -e "${GREEN}[OK] Skill软链: 新建$LINKED / 失败$LINK_FAIL${NC}"
+
+# 部署规则Skill（端专属·T0加载五系统文件）
+RULE_SKILL_TMPL="$PKG_DIR/templates/skills/布洛陀-豆包办公规则"
+RULE_SKILL_TARGET="$USER_SKILLS/布洛陀-豆包办公规则"
+if [ -d "$RULE_SKILL_TARGET" ] || [ -L "$RULE_SKILL_TARGET" ]; then
+  echo -e "  ⏭️ 跳过(已存在): 布洛陀-豆包办公规则 Skill"
+else
+  cp -r "$RULE_SKILL_TMPL" "$RULE_SKILL_TARGET"
+  echo -e "  ✅ 部署: 布洛陀-豆包办公规则 Skill"
+fi
 
 # ── [5/8] 部署豆包办公端特有脚本 ──
 echo -e "${YELLOW}[5/8] 部署豆包办公端特有脚本...${NC}"
@@ -184,18 +207,51 @@ if [ -f "$SCRIPTS_DIR/patrol/route_doubaowork_patrol.sh" ]; then VERIFY_PASS=$((
 else echo -e "  ❌ 巡逻脚本缺失"; VERIFY_FAIL=$((VERIFY_FAIL+1)); fi
 echo -e "${GREEN}[OK] 自验证: 通过$VERIFY_PASS / 失败$VERIFY_FAIL${NC}"
 
-# ── [8/8] 完成报告 ──
+# ── [8/8] 完成报告 + 自动复制剪贴板 ──
 echo ""
 echo -e "${CYAN}=== 豆包办公加强包 接入完成 ===${NC}"
 echo -e "${GREEN}✅ 五系统文件: $SYSTEM_FILES_DIR/${NC}"
 echo -e "${GREEN}✅ Skill软链: $USER_SKILLS/${NC}"
 echo -e "${GREEN}✅ 特有脚本: $SCRIPTS_DIR/${NC}"
-echo -e "${YELLOW}⚠️  下一步:${NC}"
-echo -e "  1. 新会话启动时,AI会主动Read五系统文件(SOUL/IDENTITY/USER/MEMORY/customPrompt)"
-echo -e "  2. 如需定时巡逻,在豆包办公中创建cronjob挂载: $SCRIPTS_DIR/patrol/route_doubaowork_patrol.sh"
-echo -e "  3. 运行验证脚本确认安装: bash verify.sh"
-echo -e "  4. ⚠️ 关键: 将 $SYSTEM_FILES_DIR/customPrompt.md「三、执行准则」段全文复制到 豆包办公→设置→自定义指令"
-echo -e "     (核心铁律靠平台自动注入🔴,不设置则五系统文件不会自动加载)"
+
+# 自动复制自定义指令到剪贴板
+PKG_DIR="$(cd "$(dirname "$0")" && pwd)"
+COPY_FILE="$PKG_DIR/custom-prompt-to-copy.md"
+if [ -f "$COPY_FILE" ] && command -v pbcopy >/dev/null 2>&1; then
+  # 提取md文件中第一个代码块的内容（```之间），复制到剪贴板
+  sed -n '/^```$/,/^```$/p' "$COPY_FILE" | sed '1d;$d' | pbcopy
+  echo -e "${GREEN}✅ 自定义指令已自动复制到剪贴板${NC}"
+  CLIPBOARD_COPIED=1
+else
+  echo -e "${YELLOW}⚠️  未能自动复制到剪贴板，请手动复制: $COPY_FILE${NC}"
+  CLIPBOARD_COPIED=0
+fi
+
+# 自动打开豆包办公
+if command -v open >/dev/null 2>&1; then
+  open -a "Doubao Work" 2>/dev/null || open -a "豆包办公" 2>/dev/null || true
+fi
+
+echo ""
+echo -e "${YELLOW}⚠️  还差最后一步（30秒搞定）:${NC}"
+echo -e "  豆包办公跟其他AI工具不一样，它的偏好设置存在云端，脚本没法自动写进去，需要你手动粘贴一次。"
+echo -e "  粘贴之后，每次开新对话AI都会自动记住你是谁、你要什么，换个新对话也不会忘。"
+echo -e "  不粘贴的话，五系统文件虽然装好了，但AI不会主动去读，等于白装。"
+echo ""
+if [ "$CLIPBOARD_COPIED" -eq 1 ]; then
+  echo -e "  1. 豆包办公 → 左下角头像 → 设置 → 工作任务偏好指令"
+  echo -e "  2. 粘贴（⌘V）→ 点保存"
+  echo -e "  3. 开个新对话，问AI「你的第一目的是什么」，能答出「让这套系统成为自主进化的活系统」就成功了"
+else
+  echo -e "  1. 打开 $COPY_FILE，复制代码块里的全部内容"
+  echo -e "  2. 豆包办公 → 左下角头像 → 设置 → 工作任务偏好指令"
+  echo -e "  3. 粘贴（⌘V）→ 点保存"
+  echo -e "  4. 开个新对话，问AI「你的第一目的是什么」，能答出「让这套系统成为自主进化的活系统」就成功了"
+fi
+echo ""
+echo -e "${CYAN}其他操作:${NC}"
+echo -e "  - 运行验证脚本确认安装: bash verify.sh"
+echo -e "  - 如需定时巡逻，在豆包办公中创建cronjob挂载: $SCRIPTS_DIR/patrol/route_doubaowork_patrol.sh"
 echo ""
 
 if [ "$VERIFY_FAIL" -gt 0 ]; then
