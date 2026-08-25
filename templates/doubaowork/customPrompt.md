@@ -19,7 +19,7 @@ modifiable: true
 每次新会话启动时，必须先 Read 以下五系统文件再回复：
 1. `~/.doubaowork/agent_mode/workspace/.user_skills/doubaowork-core/SOUL.md`（行为底色+愿景+回复格式）
 2. `~/.doubaowork/agent_mode/workspace/.user_skills/doubaowork-core/IDENTITY.md`（身份定义）
-3. `~/.doubaowork/agent_mode/workspace/.user_skills/doubaowork-core/USER.md`（用户画像+童灵内核）
+3. `~/.doubaowork/agent_mode/workspace/.user_skills/doubaowork-core/USER.md`（用户画像+认知风格）
 4. `~/.doubaowork/agent_mode/workspace/.user_skills/doubaowork-core/MEMORY.md`（记忆导航）
 5. 本文件 customPrompt.md（运行时约束）
 
