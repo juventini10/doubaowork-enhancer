@@ -38,6 +38,7 @@
 1. **五系统文件部署**（SOUL/IDENTITY/USER/MEMORY/customPrompt）——豆包办公端专属行为底色、身份定义、用户画像、记忆导航、自定义指令，增量不覆盖
 2. **Skill软链接**——记忆中心的 9+ 记忆 Skill 软链到豆包办公 `.user_skills` 目录，Junction 优先（免管理员/免开发者模式），增量安全（不覆盖用户已有实体文件）
 3. **特有脚本部署**——巡逻脚本（route_doubaowork_patrol.sh，3守卫：rule_three_layer + card_id + skill_health）+ Skill 生态健康度守卫（doubaowork_skill_health_guard.py）
+   - **推荐巡逻频率**：每天2次（09:00 + 21:00）。文件级异常（三层规则/Skill软链/卡片ID）不会频繁变更，30分钟一次属过度巡检。真有紧急情况可手动跑 `bash route_doubaowork_patrol.sh`。在豆包办公中用cronjob挂载：`0 9,21 * * *`
 4. **记忆琥珀白名单补充**——豆包办公端特有文件（五系统文件目录、豆包办公宪法等）追加到记忆琥珀白名单，基础安装包自带的记忆琥珀引擎不变
 5. **指纹门禁 + 自验证**——安装前指纹级检测布洛陀完整性，安装后自验证全绿
 

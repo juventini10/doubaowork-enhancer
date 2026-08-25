@@ -101,12 +101,6 @@ for tmpl in "$TEMPLATE_DIR"/*.md; do
 done
 echo -e "${GREEN}[OK] 五系统文件: 新部署$DEPLOYED / 已存在跳过$SKIPPED${NC}"
 
-# 自定义指令核心文本（机械强制层·用户手动复制到豆包办公设置）
-if [ -f "$PKG_DIR/custom-prompt-core.txt" ]; then
-  cp "$PKG_DIR/custom-prompt-core.txt" "$SYSTEM_FILES_DIR/custom-prompt-core.txt"
-  echo -e "  ✅ 自定义指令核心文本: $SYSTEM_FILES_DIR/custom-prompt-core.txt"
-fi
-
 # ── [4/8] Skill软链接 ──
 echo -e "${YELLOW}[4/8] 建立Skill软链接(记忆中心→豆包办公.user_skills)...${NC}"
 LINKED=0; LINK_FAIL=0
@@ -200,8 +194,8 @@ echo -e "${YELLOW}⚠️  下一步:${NC}"
 echo -e "  1. 新会话启动时,AI会主动Read五系统文件(SOUL/IDENTITY/USER/MEMORY/customPrompt)"
 echo -e "  2. 如需定时巡逻,在豆包办公中创建cronjob挂载: $SCRIPTS_DIR/patrol/route_doubaowork_patrol.sh"
 echo -e "  3. 运行验证脚本确认安装: bash verify.sh"
-echo -e "  4. ⚠️ 关键: 将 custom-prompt-core.txt 内容复制到 豆包办公→设置→自定义指令"
-echo -e "     (核心铁律靠平台自动注入,不设置则五系统文件不会自动加载)"
+echo -e "  4. ⚠️ 关键: 将 $SYSTEM_FILES_DIR/customPrompt.md「三、执行准则」段全文复制到 豆包办公→设置→自定义指令"
+echo -e "     (核心铁律靠平台自动注入🔴,不设置则五系统文件不会自动加载)"
 echo ""
 
 if [ "$VERIFY_FAIL" -gt 0 ]; then
