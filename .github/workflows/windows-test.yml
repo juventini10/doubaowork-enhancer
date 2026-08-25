@@ -46,16 +46,7 @@ jobs:
 
       - name: 验证回滚结果
         shell: powershell
-        run: |
-          $MC = Join-Path $env:RUNNER_TEMP "buluotuo-mc"
-          $sysDir = Join-Path $MC "豆包办公系统文件"
-          $scriptsDir = Join-Path $MC "开发工具\doubaowork-enhancer"
-          $sysExists = Test-Path $sysDir
-          $scriptsExists = Test-Path $scriptsDir
-          Write-Host "五系统文件目录存在: $sysExists (应为False)"
-          Write-Host "特有脚本目录存在: $scriptsExists (应为False)"
-          if ($sysExists -or $scriptsExists) { throw "回滚不彻底" }
-          Write-Host "回滚验证通过"
+        run: powershell -ExecutionPolicy Bypass -File .github/scripts/verify-rollback.ps1
 
   macos-setup-verify:
     runs-on: macos-latest
