@@ -47,7 +47,8 @@ Get-ChildItem $USER_SKILLS -Directory -ErrorAction SilentlyContinue | ForEach-Ob
   $item = Get-Item $_.FullName -Force
   if ($item.LinkType -eq "Junction" -or $item.LinkType -eq "SymbolicLink") {
     if ($item.Target -like "$MC\技能配置\*") {
-      Remove-Item $_.FullName -Force
+      # 用Directory.Delete删除Junction(不递归目标), 避免Remove-Item的NullReferenceException
+      [System.IO.Directory]::Delete($_.FullName, $false)
       Write-Host "  ✅ 删除: $($_.Name)" -ForegroundColor Green
       $DEL++
     } else {
