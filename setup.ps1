@@ -120,6 +120,12 @@ Get-ChildItem (Join-Path $TEMPLATE_DIR "*.md") | ForEach-Object {
 }
 Write-Ok "五系统文件: 新部署$DEPLOYED / 已存在跳过$SKIPPED"
 
+# 自定义指令核心文本（机械强制层·用户手动复制到豆包办公设置）
+if (Test-Path "$PKG_DIR\custom-prompt-core.txt") {
+  Copy-Item "$PKG_DIR\custom-prompt-core.txt" "$SYSTEM_FILES_DIR\custom-prompt-core.txt" -Force
+  Write-Host "  ✅ 自定义指令核心文本: $SYSTEM_FILES_DIR\custom-prompt-core.txt"
+}
+
 # ── [4/8] Skill软链接(Junction·增量安全·不覆盖用户实体文件) ──
 Write-Step "[4/8] 建立Skill软链接(记忆中心→豆包办公.user_skills)..."
 $LINKED=0; $KEPT=0; $FAIL=0
@@ -218,6 +224,8 @@ Write-Warn "下一步:"
 Write-Host "  1. 新会话启动时,AI会主动Read五系统文件(SOUL/IDENTITY/USER/MEMORY/customPrompt)"
 Write-Host "  2. 如需定时巡逻,在豆包办公中创建cronjob挂载巡逻脚本"
 Write-Host "  3. 运行验证脚本确认安装: powershell -ExecutionPolicy Bypass -File verify.ps1"
+Write-Host "  4. ⚠️ 关键: 将 custom-prompt-core.txt 内容复制到 豆包办公→设置→自定义指令"
+Write-Host "     (核心铁律靠平台自动注入,不设置则五系统文件不会自动加载)"
 Write-Host ""
 
 if ($VF -gt 0) {
