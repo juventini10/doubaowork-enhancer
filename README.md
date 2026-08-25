@@ -1,0 +1,67 @@
+# 豆包办公加强包 (DoubaoWork Enhancer)
+
+> 版本：v1.0（2026-08-25）| 权威版本源：`version.md`
+
+> ⚠️ **前提（必读）**：本加强包是**增强层，不是完整安装包**。你必须**先装好布洛陀五层记忆系统**（记忆共享中心已就位），才能享受完整功能。
+> **没装布洛陀会怎样**：接入脚本第 1 步做**指纹级检测**（五层核心文件内容级 + 9 记忆 Skill——不是只看目录在不在，通用目录冒充不过关），不完整就**安全中止**（不破坏任何东西），提示你先去装布洛陀——不会装坏、不会残留。
+> 📁 **记忆共享中心目录名可自定义**：脚本自动探测常见命名（`个人AI档案`/`共享中心`/`记忆中心`/`布洛陀`），不硬编码单一目录名；若为其他名字，用 `MEMORY_CENTER=/你的目录名 bash setup.sh` 显式指定。
+> 🔒 **脱敏分发**：本包**不含任何个人信息**——所有真实路径用 `§§MC§§` 占位符（安装时替换），作者标注统一为「皮叔」，无真实用户名/邮箱/绝对路径残留。
+
+给**已装布洛陀**的用户，一键让 **豆包办公** 也用上你已有的记忆系统（不重装、不覆盖你的文件）。
+
+## 怎么用（最简单）
+
+把本文件夹**丢进豆包办公对话框，说「安装」** —— AI 会自动跑接入脚本、体检、报告结果。
+
+## 或手动跑脚本
+
+- **macOS / Linux**：`bash setup.sh`
+- **Windows（原生 PowerShell，零依赖）**：`powershell -ExecutionPolicy Bypass -File setup.ps1`
+  - 若你已装 Git Bash/WSL，也可直接 `bash setup.sh`（与 Mac 同路径）
+- 接入自检（只读·可随时重跑）：`bash verify.sh`（Mac/Linux）／`powershell -ExecutionPolicy Bypass -File verify.ps1`（Win）
+- 回滚（只删加强包创建的，不碰布洛陀基础安装）：`bash rollback.sh`／`powershell -ExecutionPolicy Bypass -File rollback.ps1`
+- 脱敏门禁（维护者发布前必跑）：`bash desensitize-guard.sh`
+
+## 发布检查清单（维护者发布前必跑）
+
+> 把"能否对外发布"变成机械可判定检查，不依赖记忆/肉眼。
+
+**闸门0 · 脱敏卫生**：`bash desensitize-guard.sh` → 全包零真实用户名/邮箱/真实路径残留，仅 `§§MC§§` 占位符 + 皮叔作者标。分发前 `rm -rf .git`。
+**闸门1 · 分发禁止文件**：无 `.git`/`.DS_Store`/`.github`/`.gitignore` 等仓库/系统垃圾。
+**闸门2 · 双平台验证**：`bash verify.sh`（Mac）+ `powershell -File verify.ps1`（Win）全绿。
+三闸门全绿 → **可对外发布**。用户侧验收：`bash verify.sh` → `PASS=N FAIL=0`。
+
+## 它会做什么
+
+把豆包办公接到你**已有**的记忆中心（不重装、不覆盖你的文件）：
+
+1. **五系统文件部署**（SOUL/IDENTITY/USER/MEMORY/customPrompt）——豆包办公端专属行为底色、身份定义、用户画像、记忆导航、自定义指令，增量不覆盖
+2. **Skill软链接**——记忆中心的 9+ 记忆 Skill 软链到豆包办公 `.user_skills` 目录，Junction 优先（免管理员/免开发者模式），增量安全（不覆盖用户已有实体文件）
+3. **特有脚本部署**——巡逻脚本（route_doubaowork_patrol.sh，3守卫：rule_three_layer + card_id + skill_health）+ Skill 生态健康度守卫（doubaowork_skill_health_guard.py）
+4. **记忆琥珀白名单补充**——豆包办公端特有文件（五系统文件目录、豆包办公宪法等）追加到记忆琥珀白名单，基础安装包自带的记忆琥珀引擎不变
+5. **指纹门禁 + 自验证**——安装前指纹级检测布洛陀完整性，安装后自验证全绿
+
+## 豆包办公端特有机制（与 WorkBuddy/Hermes/LobsterAI 不同）
+
+| 机制 | 豆包办公实况 |
+|------|-------------|
+| Agent架构 | MainAgent（用户直接对话）→ OrganizeAgent（任务委派）→ SubAgent（具体执行） |
+| 守卫机制 | 软约束🟡（无Stop钩子/无Hook事件/无完整transcript），文件级守卫可机械执行✅ |
+| Skill加载 | `.user_skills` 目录，需主动触发（无每turn自动注入） |
+| 系统文件 | 手动Read加载（无系统级自动注入） |
+| 定时任务 | cronjob内置（周期cron + 一次性at） |
+| 记忆琥珀 | 基础安装包自带，加强包只补充白名单 |
+| 署名 | `—— 🍵 豆包办公`（茶·端专属） |
+| 安装入口 | **macOS/Linux**：`bash setup.sh`　**Windows**：`powershell -ExecutionPolicy Bypass -File setup.ps1`（零依赖原生）；Git Bash/WSL 下亦可 `bash setup.sh` |
+
+## 最近变更
+
+- **v1.0 首发**（2026-08-25）：基于豆包办公端接入现状（五系统文件已落地·巡逻脚本已挂载·Skill健康守卫已开创）搭建，对齐兄弟加强包范式（指纹门禁/数据清理/增量不覆盖/体检指路/自验证/脱敏门禁），按豆包办公机制适配：Agent三层委派架构 + 软约束守卫（无Stop钩子）+ cronjob定时任务 + `.user_skills`软链；全包脱敏（§§MC§§占位符 + 皮叔作者标，零个人信息）；MAC+Win双平台支持（setup.sh/setup.ps1/verify.sh/verify.ps1/rollback.sh/rollback.ps1）。
+
+## 安全
+
+**增量增加，绝不覆盖你已有的文件**（和布洛陀安装包同逻辑）。可重复跑。回滚只删加强包创建的内容，不碰布洛陀基础安装。
+
+## 作者
+
+皮叔 | 布洛陀五层记忆系统 · 豆包办公端加强包
