@@ -58,7 +58,7 @@ FILES=$(find "$PKG" -type f \
   \( -name "*.sh" -o -name "*.ps1" -o -name "*.md" -o -name "*.yml" -o -name "*.yaml" \
      -o -name "*.py" -o -name "*.ts" -o -name "*.js" -o -name "*.json" -o -name "*.svg" \
      -o -name "*.plist" -o -name "*.txt" -o -name "*.xml" -o -name "*.template" \) \
-  -not -path "*/.git/*" -not -name "desensitize-guard.sh" -not -name "_sync-check.sh" -not -name "LICENSE" 2>/dev/null)
+  -not -path "*/.git/*" -not -name "desensitize-guard.sh" -not -name "desensitize-guard.ps1" -not -name "_sync-check.sh" -not -name "LICENSE" 2>/dev/null)
 
 while IFS= read -r f; do
   [ -z "$f" ] && continue
