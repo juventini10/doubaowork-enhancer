@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# 豆包办公加强包 — 回滚脚本 v1.0 (macOS/Linux)
+# 豆包办公加强包 — 回滚脚本 v1.0.0 (macOS/Linux)
 # 功能: 卸载豆包办公加强包(删除软链/脚本/五系统文件模板),不碰布洛陀基础安装
 # 用法: bash rollback.sh
 # 设计: 只删加强包创建的东西,绝不碰用户已有文件/布洛陀基础安装
@@ -22,7 +22,7 @@ USER_SKILLS="$DOUBAO_HOME/.user_skills"
 SYSTEM_FILES_DIR="$MC/豆包办公系统文件"
 SCRIPTS_DIR="$MC/开发工具/doubaowork-enhancer"
 
-echo "=== 豆包办公加强包 回滚 v1.0 ==="
+echo "=== 豆包办公加强包 回滚 v1.0.0 ==="
 echo "记忆中心: $MC"
 echo ""
 echo -e "${YEL}⚠️  将删除以下内容(只删加强包创建的,不碰布洛陀基础安装):${NC}"

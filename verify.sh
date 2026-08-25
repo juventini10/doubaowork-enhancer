@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# 豆包办公加强包 — 验证脚本 v1.0 (macOS/Linux)
+# 豆包办公加强包 — 验证脚本 v1.0.0 (macOS/Linux)
 # 功能: 只读验证加强包安装状态，不修改任何文件
 # 用法: bash verify.sh
 # 作者: 皮叔
@@ -21,7 +21,7 @@ USER_SKILLS="$DOUBAO_HOME/.user_skills"
 SYSTEM_FILES_DIR="$MC/豆包办公系统文件"
 SCRIPTS_DIR="$MC/开发工具/doubaowork-enhancer"
 
-echo "=== 豆包办公加强包 验证 v1.0 ==="
+echo "=== 豆包办公加强包 验证 v1.0.0 ==="
 echo "记忆中心: $MC"
 echo ""
 

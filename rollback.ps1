@@ -1,5 +1,5 @@
 ﻿# ============================================================
-# 豆包办公加强包 — 回滚脚本 v1.0 (Windows PowerShell)
+# 豆包办公加强包 — 回滚脚本 v1.0.0 (Windows PowerShell)
 # 功能: 卸载豆包办公加强包(删除软链/脚本/五系统文件模板),不碰布洛陀基础安装
 # 用法: powershell -ExecutionPolicy Bypass -File rollback.ps1
 # 设计: 只删加强包创建的东西,绝不碰用户已有文件/布洛陀基础安装
@@ -29,7 +29,7 @@ $USER_SKILLS = Join-Path $DOUBAO_HOME ".user_skills"
 $SYSTEM_FILES_DIR = Join-Path $MC "豆包办公系统文件"
 $SCRIPTS_DIR = Join-Path $MC "开发工具\doubaowork-enhancer"
 
-Write-Host "=== 豆包办公加强包 回滚 v1.0 ==="
+Write-Host "=== 豆包办公加强包 回滚 v1.0.0 ==="
 Write-Host "记忆中心: $MC"
 Write-Host ""
 Write-Host "⚠️  将删除以下内容(只删加强包创建的,不碰布洛陀基础安装):" -ForegroundColor Yellow

@@ -1,5 +1,5 @@
 ﻿# ============================================================
-# 豆包办公加强包 — 接入脚本 v1.0 (Windows PowerShell)
+# 豆包办公加强包 — 接入脚本 v1.0.0 (Windows PowerShell)
 # 前提:已装布洛陀五层记忆系统(记忆中心已就位) + 已装豆包办公桌面端
 # 功能:指纹检测 → 占位符替换 → 五系统文件部署 → Skill软链 → 脚本部署 → 白名单补充 → 自验证
 # 用法: powershell -ExecutionPolicy Bypass -File setup.ps1
@@ -50,7 +50,7 @@ $USER_SKILLS = Join-Path $DOUBAO_HOME ".user_skills"
 $SYSTEM_FILES_DIR = Join-Path $MC "豆包办公系统文件"
 $SCRIPTS_DIR = Join-Path $MC "开发工具\doubaowork-enhancer"
 
-Write-Step "=== 豆包办公加强包 接入 v1.0 (PowerShell) ==="
+Write-Step "=== 豆包办公加强包 接入 v1.0.0 (PowerShell) ==="
 Write-Warn "    前提:需已装布洛陀五层记忆系统 + 已装豆包办公桌面端"
 Write-Step "    记忆中心: $MC | 沙盒: $SANDBOX"
 

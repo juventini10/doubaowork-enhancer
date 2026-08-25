@@ -1,5 +1,5 @@
 ﻿# ============================================================
-# 豆包办公加强包 — 验证脚本 v1.0 (Windows PowerShell)
+# 豆包办公加强包 — 验证脚本 v1.0.0 (Windows PowerShell)
 # 功能: 只读验证加强包安装状态
 # 用法: powershell -ExecutionPolicy Bypass -File verify.ps1
 # 作者: 皮叔
@@ -17,7 +17,7 @@ $USER_SKILLS = "$DOUBAO_HOME\.user_skills"
 $SYSTEM_FILES_DIR = "$MC\豆包办公系统文件"
 $SCRIPTS_DIR = "$MC\开发工具\doubaowork-enhancer"
 
-Write-Host "=== 豆包办公加强包 验证 v1.0 ==="
+Write-Host "=== 豆包办公加强包 验证 v1.0.0 ==="
 Write-Host "记忆中心: $MC`n"
 $PASS=0; $FAIL=0; $WARN=0
 function Check($name, $cond, $level="fail") {
@@ -44,7 +44,9 @@ foreach ($f in @("SOUL.md","IDENTITY.md","USER.md","MEMORY.md","customPrompt.md"
 
 Write-Host "`n[4/5] Skill软链接检测(抽样)"
 foreach ($s in @("system-logger","daily-buddy","awaken-memory-system","growth-box","clock-loop")) {
-    Check "$s 软链" (Test-Path "$USER_SKILLS\$s") "warn"
+    $item = Get-Item "$USER_SKILLS\$s" -Force -ErrorAction SilentlyContinue
+    $isLink = ($item -and ($item.LinkType -eq "Junction" -or $item.LinkType -eq "SymbolicLink"))
+    Check "$s 软链" $isLink "warn"
 }
 
 Write-Host "`n[5/5] 特有脚本检测"
