@@ -1,4 +1,4 @@
-# setup-mc-env.ps1 — CI用: 创建最小布洛陀记忆中心模拟环境
+﻿# setup-mc-env.ps1 — CI用: 创建最小布洛陀记忆中心模拟环境
 $ErrorActionPreference = "Stop"
 $MC = Join-Path $env:RUNNER_TEMP "buluotuo-mc"
 
